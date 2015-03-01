@@ -32,14 +32,15 @@ For generating 4 empty instances
 It will generate all instances that form Person and including Person.
 
 If you use :set -ddump-splices, you will get
-  instances ''Out  ''Person
-    ======>
+
+    instances ''Out  ''Person
+
         ~\Test.hs:13:1-18
         instance Out Names
         instance Out Gate
         instance Out Address
         instance Out Person
-            Ok, modules loaded: CompositeDataInstancesGen, Main.
+        Ok, modules loaded: CompositeDataInstancesGen, Main.
 
 You can also use instnaceList to generate a list of class. 
 Also in GHC 7.10 standalone deriving will be supported and you do not need to write

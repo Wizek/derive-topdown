@@ -34,7 +34,7 @@ It will generate all instances that form Person and including Person.
 If you use :set -ddump-splices, you will get
 
     instances ''Out  ''Person
-
+    ======>
         ~\Test.hs:13:1-18
         instance Out Names
         instance Out Gate

@@ -82,3 +82,4 @@ gen cla tp = do
             xs <-  mapM (\n -> gen cla n) names
             return $ concat xs ++ dec
 
+

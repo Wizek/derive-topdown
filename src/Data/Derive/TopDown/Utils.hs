@@ -22,9 +22,15 @@ getCxtTyVarCons name = do
              _ -> error "bad type name, quoted name is not a type!"
 
 
+
+getCxtTyVarCons' :: Type ->  Q (Cxt, [TyVarBndr], [Con])
+getCxtTyVarCons'(ConT t) = undefined --return ([],[],[NormalC])
+
 {-|
 applyContext ''Eq [''a, ''b] will give (Eq a, Eq b) class constraint
 -}
+
 applyContext :: Name -> [Name] -> Q [Pred]
 applyContext con typeNames = return (map apply typeNames)
                          where apply t = ClassP con [VarT t]
+

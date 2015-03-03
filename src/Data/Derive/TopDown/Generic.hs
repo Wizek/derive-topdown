@@ -23,7 +23,6 @@ data Address = Address Gate
 type Gate = PF
 
 data PF = PF String deriving (Data, Typeable, Generic, Ord,Eq,Show)
-
 @
 For generating 4 empty instances
 > instance Out Person
@@ -71,6 +70,7 @@ gen cla tp = do
     let declTypes = conT cla `appT` (return instanceType)
     isMember <- if tvbs == []
                        then lift $ isInstance cla [instanceType]
+                            ---- Actually the following line will not word
                        else lift $ isInstance cla [ForallT tvbs cxt instanceType]
     table <- get
     if isMember || elem instanceType table

@@ -1,8 +1,7 @@
 {-# LANGUAGE TemplateHaskell , QuasiQuotes, RankNTypes #-}
 
 module Data.Derive.TopDown.Derive (
-derivings,
-module Data.DeriveTH 
+derivings
 ) where
 
 import Data.Derive.TopDown.Utils
@@ -26,7 +25,7 @@ import Data.DeriveTH
 If you enable -ddump-splices, you will get:
 >
 > Data\Derive\TopDown\Test.hs:1:1: Splicing declarations
->    derivings ''Eq makeEq ''A
+>    derives ''Eq makeEq ''A
 >  ======>
 >    Data\Derive\TopDown\Test.hs:18:1-25
 >    instance Eq a_1627720873 => Eq (B a_1627720873) where
@@ -68,7 +67,7 @@ gen cla tp  dv = do
 
 ---- Please ignore the following
 ---- I am trying to implement without specifying makeEq, or makeOrd ...
-derivings' :: Name -> Name  -> Q [Exp]
+derivings' :: Name -> Name -> Q [Exp]
 derivings' className typeName  = (fmap fst ((runStateT $ gen' className typeName) []))
 
 gen' :: Name -> Name ->  StateT [Type] Q [Exp]
@@ -93,6 +92,15 @@ gen' cla tp = do
             let names = concatMap getCompositeType cons
             xs <-  mapM (\n -> gen' cla n ) names
             return $ concat xs ++ [dec]        
+
+-- data D = D
+
+derivings'' :: Name -> Name -> Q Exp
+derivings'' cla typ = do
+               let makeClassName = mkName $ "make" ++ nameBase cla
+               
+               a <-  [| derive makeClassName (typ) |]
+               return a
 
 
 instance S.Lift Name where

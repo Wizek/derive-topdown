@@ -82,9 +82,29 @@ Do not forget to use :set -ddump-splices, you will get
         instance Out Person
         Ok, modules loaded: CompositeDataInstancesGen, Main.
 
-You can also use instnaceList to generate a list of class. 
-Also in GHC 7.10 standalone deriving will be supported and you do not need to write
+You can also use instnaceList to generate a list of class. Solution 1 is to use derive package
+
+    derivings ''Eq makeEq ''A 
+
+If you enable -ddump-splices, you will get:
+
+    Data\Derive\TopDown\Test.hs:1:1: Splicing declarations
+       derives ''Eq makeEq ''A
+     ======>
+       Data\Derive\TopDown\Test.hs:18:1-25
+       instance Eq a_1627720873 => Eq (B a_1627720873) where
+         (==) (B x1) (B y1) = (x1 == y1)
+       instance (Eq a_1627720874, Eq b_1627720875) =>
+                Eq (A a_1627720874 b_1627720875) where
+         (==) (A x1 x2) (A y1 y2) = ((x1 == y1) && (x2 == y2))
+
+We have to specify makeEq or other Derivation values here and I am not sure how to eleminate it. 
+
+Solution is is to use standalone deriving. it will be supposrt in GHC 7.10 standalone deriving will be supported and you do not need to write. Currently unimplemented. 
 
     deriving (Data, Typeable, Generic, Ord,Eq,Show)
 
-for each data type declarations ever again.
+for each data type declarations ever again. In stead you will be able to write:
+
+    derivings instance [''Eq, ''Typeable, ''Generic] A
+    

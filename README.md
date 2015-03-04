@@ -100,7 +100,7 @@ If you enable -ddump-splices, you will get:
 
 We have to specify makeEq or other Derivation values here and I am not sure how to eleminate it. 
 
-Solution is is to use standalone deriving. it will be supposrt in GHC 7.10 standalone deriving will be supported and you do not need to write. Currently unimplemented. 
+Solution 2 is is to use standalone deriving. it will be supposrt in GHC 7.10 standalone deriving will be supported and you do not need to write. *Currently unimplemented*. 
 
     deriving (Data, Typeable, Generic, Ord,Eq,Show)
 

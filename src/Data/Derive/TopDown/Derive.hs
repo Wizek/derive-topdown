@@ -1,3 +1,28 @@
+{-|
+
+> data A a b = A a (B b) deriving (Show)
+> data B a = B a deriving (Show)
+>
+> derivings ''Eq makeEq ''A 
+
+If you enable -ddump-splices, you will get:
+
+>
+> Data\Derive\TopDown\Test.hs:1:1: Splicing declarations
+>    derives ''Eq makeEq ''A
+>  ======>
+>    Data\Derive\TopDown\Test.hs:18:1-25
+>    instance Eq a_1627720873 => Eq (B a_1627720873) where
+>      (==) (B x1) (B y1) = (x1 == y1)
+>    instance (Eq a_1627720874, Eq b_1627720875) =>
+>             Eq (A a_1627720874 b_1627720875) where
+>      (==) (A x1 x2) (A y1 y2) = ((x1 == y1) && (x2 == y2))
+
+This will make sense if you have a deep composited data types, nomally an AST of a language.
+For now, you have to specify both of ''Eq and makeEq, I suppose ''Eq will be enough.
+To look what typeclasses you can derive, see 'derive' library on hackage.
+-}
+
 {-# LANGUAGE TemplateHaskell , QuasiQuotes, RankNTypes #-}
 
 module Data.Derive.TopDown.Derive (
@@ -17,27 +42,6 @@ import qualified Language.Haskell.TH.Syntax as S
 import Data.DeriveTH
 
 -- | deriving from top
-{-|
-> data A a b = A a (B b) deriving (Show)
-> data B a = B a deriving (Show)
->
-> derivings ''Eq makeEq ''A 
-If you enable -ddump-splices, you will get:
->
-> Data\Derive\TopDown\Test.hs:1:1: Splicing declarations
->    derives ''Eq makeEq ''A
->  ======>
->    Data\Derive\TopDown\Test.hs:18:1-25
->    instance Eq a_1627720873 => Eq (B a_1627720873) where
->      (==) (B x1) (B y1) = (x1 == y1)
->    instance (Eq a_1627720874, Eq b_1627720875) =>
->             Eq (A a_1627720874 b_1627720875) where
->      (==) (A x1 x2) (A y1 y2) = ((x1 == y1) && (x2 == y2))
-
-This will make sense if you have a deep composited data types, nomally an AST of a language.
-For now, you have to specify both of ''Eq and makeEq, I suppose ''Eq will be enough.
-To look what typeclasses you can derive, see 'derive' library on hackage.
--}
 derivings :: Name -> Derivation -> Name -> Q [Dec]
 derivings className dv typeName  = (fmap fst ((runStateT $ gen className typeName dv) []))
 
@@ -86,7 +90,7 @@ gen' cla tp = do
             let makeClassName = mkName $ "make" ++ nameBase cla
             let tpname = nameBase tp
             dec <- lift $ appExp [(varE (mkName "derive")), (varE makeClassName), (varE tp)]
-            -- ****** how to splice [Exp] to [Dec] ?!
+            -- how to splice [Exp] to [Dec] ?!
             lift [| derive $(varE makeClassName) tp |]
             modify (instanceType:)
             let names = concatMap getCompositeType cons
